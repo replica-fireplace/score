@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>콘텐츠 구조 스코어링 리포트</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --ink: #111827;
+      --muted: #6b7280;
+      --line: #d8dde6;
+      --green: #15803d;
+      --green-bg: #eaf7ee;
+      --amber: #b45309;
+      --amber-bg: #fff4df;
+      --red: #b91c1c;
+      --red-bg: #feecec;
+      --blue: #1d4ed8;
+      --blue-bg: #eaf1ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    .page {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.2fr) repeat(5, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .score-main {
+      padding: 18px;
+      background: var(--blue-bg);
+      border-color: #c8d8ff;
+    }
+
+    .score-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .score-value {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-card {
+      padding: 16px;
+    }
+
+    .score-card strong {
+      display: block;
+      font-size: 22px;
+      margin-top: 8px;
+    }
+
+    .diagnosis {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .priority-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.85fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .draft-preview {
+      max-height: 760px;
+      overflow: auto;
+      padding: 18px;
+    }
+
+    .draft-section {
+      border-left: 4px solid var(--line);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background: #fbfcfe;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .draft-section.pass { border-left-color: var(--green); }
+    .draft-section.warn { border-left-color: var(--amber); }
+    .draft-section.risk { border-left-color: var(--red); }
+
+    .draft-section p {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .feedback-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .section-card {
+      padding: 16px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status.pass { color: var(--green); background: var(--green-bg); }
+    .status.warn { color: var(--amber); background: var(--amber-bg); }
+    .status.risk { color: var(--red); background: var(--red-bg); }
+
+    .section-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mini-block {
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .mini-block b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .mini-block p, .mini-block ul {
+      margin: 0;
+      color: #374151;
+      font-size: 14px;
+    }
+
+    blockquote {
+      margin: 8px 0 0;
+      padding: 10px 12px;
+      border-left: 3px solid var(--blue);
+      background: var(--blue-bg);
+      color: #1f2937;
+    }
+
+    .checklist {
+      margin-top: 16px;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard, .diagnosis, .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .meta {
+        text-align: left;
+      }
+
+      header {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>콘텐츠 구조 스코어링 리포트</h1>
+        <div class="score-label">구조 준수도, 작성 규칙, AEO, SEO, 편집 품질 검수</div>
+      </div>
+      <div class="meta">
+        구조 파일: {{STRUCTURE_FILE}}<br />
+        원고: {{DRAFT_FILE}}<br />
+        생성일: {{GENERATED_AT}}
+      </div>
+    </header>
+
+    <section class="dashboard" aria-label="스코어링 대시보드">
+      <article class="card score-main">
+        <div class="score-label">전체 점수</div>
+        <div class="score-value">{{TOTAL_SCORE}}/100</div>
+      </article>
+      <article class="card score-card"><div class="score-label">구조 준수도</div><strong>{{STRUCTURE_SCORE}}/35</strong></article>
+      <article class="card score-card"><div class="score-label">작성 규칙</div><strong>{{RULE_SCORE}}/25</strong></article>
+      <article class="card score-card"><div class="score-label">AEO</div><strong>{{AEO_SCORE}}/20</strong></article>
+      <article class="card score-card"><div class="score-label">SEO</div><strong>{{SEO_SCORE}}/15</strong></article>
+      <article class="card score-card"><div class="score-label">편집 품질</div><strong>{{EDITORIAL_SCORE}}/5</strong></article>
+    </section>
+
+    <section class="diagnosis">
+      <article class="panel">
+        <h2>핵심 진단</h2>
+        <p>{{KEY_DIAGNOSIS}}</p>
+      </article>
+      <article class="panel">
+        <h2>개선 우선순위</h2>
+        <ol class="priority-list">
+          {{PRIORITY_ITEMS}}
+        </ol>
+      </article>
+    </section>
+
+    <section class="workspace">
+      <article class="panel draft-preview">
+        <h2>원고 텍스트</h2>
+        {{DRAFT_SECTIONS}}
+      </article>
+      <aside class="feedback-stack">
+        {{SECTION_CARDS}}
+        <article class="panel checklist">
+          <h2>원고 반영 체크리스트</h2>
+          <ul>
+            {{CHECKLIST_ITEMS}}
+          </ul>
+        </article>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>
